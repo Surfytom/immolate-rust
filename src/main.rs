@@ -2,6 +2,7 @@ mod random;
 mod game;
 use crate::game::state;
 use crate::game::pack;
+use crate::game::joker;
 
 fn main() {
 
@@ -15,6 +16,7 @@ fn main() {
 
     let mut game_state = state::State::new("ABC");
     
-    let pack = pack::get_random_pack(&mut game_state.random_state, game_state.ante, false);
-    println!("pack: {:?}", pack.pack);
+    let joker = joker::Joker::random(&mut game_state.random_state, joker::Rarity::COMMON, game_state.ante, "key");
+
+    println!("Joker: {:?}", joker.joker);
 }

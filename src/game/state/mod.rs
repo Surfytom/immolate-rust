@@ -27,6 +27,7 @@ impl NodeMap {
             node_value = random::seed_from_string(id);
         }
 
+        println!("Node id: {}", id);
         println!("Hashed Seed Value: {:.25}", hashed_seed);
         println!("Node Value: {:.25}", node_value);
 
