@@ -5,11 +5,6 @@ pub union DoubleLong {
     pub ul: u64
 }
 
-struct LuaRandom {
-    state: [u64; 4],
-    out: DoubleLong
-}
-
 pub fn fract(double: f64) -> f64 {
     double - double.floor()
 }
