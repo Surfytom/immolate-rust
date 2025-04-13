@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use crate::game::deck;
-use crate::random;
+use crate::lua_random;
 use crate::game::voucher;
 use crate::game::random as game_random;
 
@@ -26,16 +26,16 @@ impl NodeMap {
         if let Some(value) = self.get(id) {
             node_value = *value;
         } else {
-            node_value = random::seed_from_string(id);
+            node_value = lua_random::seed_from_string(id);
         }
 
         println!("Node id: {}", id);
         println!("Hashed Seed Value: {:.25}", hashed_seed);
         println!("Node Value: {:.25}", node_value);
 
-        let x1 = random::fract(node_value * 1.72431234 + 2.134453429141);
+        let x1 = lua_random::fract(node_value * 1.72431234 + 2.134453429141);
         println!("x1: {:.25}", x1);
-        let x2 = random::round_double(&x1, 13);
+        let x2 = lua_random::round_double(&x1, 13);
         println!("x2: {:.25}", x2);
 
         self.insert(id, x1);
@@ -55,7 +55,7 @@ impl RandomState {
     pub fn new(seed: &str) -> Self {
         RandomState { 
             seed: seed.to_string(), 
-            hashed_seed: random::seed_from_string(seed), 
+            hashed_seed: lua_random::seed_from_string(seed), 
             nodes: NodeMap::new(),
             ante: 1
         }
@@ -66,8 +66,8 @@ impl RandomState {
     }
 
     pub fn random_int(&mut self, min: f64, max: f64, seed: &str) -> i64 {
-        let mut state = random::random_state_from_seed(self.get_node(seed));
-        random::random_int(&mut state, min, max)
+        let mut state = lua_random::random_state_from_seed(self.get_node(seed));
+        lua_random::random_int(&mut state, min, max)
     }
 
     pub fn random_usize(&mut self, min: f64, max: f64, seed: &str) -> usize {
@@ -75,8 +75,8 @@ impl RandomState {
     }
 
     pub fn random_double(&mut self, seed: &str) -> f64 {
-        let mut state = random::random_state_from_seed(self.get_node(seed));
-        unsafe { random::random_double(&mut state).d }
+        let mut state = lua_random::random_state_from_seed(self.get_node(seed));
+        unsafe { lua_random::random_double(&mut state).d }
     }
 
     pub fn roll_for_soul(&mut self, type_str: &str, seed: &str) -> bool {

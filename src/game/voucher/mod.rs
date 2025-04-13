@@ -1,7 +1,7 @@
 mod voucher_data;
 use crate::game::random as game_random;
 use crate::game::state;
-use crate::random;
+use crate::lua_random;
 use std::fmt;
 
 static TYPE_STR: &'static str = "Voucher";
@@ -74,9 +74,9 @@ impl VoucherArray {
         if from_tag { type_str = TAG_TYPE_STR; }
 
         let state_seed = game_random::concat_strings(&[type_str, &random_state.ante.to_string(), resample_key, &random_state.seed]);
-        let mut state = random::random_state_from_seed(random_state.get_node(&state_seed));
+        let mut state = lua_random::random_state_from_seed(random_state.get_node(&state_seed));
 
-        let voucher_index = random::random_int(&mut state, 0.0, VoucherArray::get_max()) as usize;
+        let voucher_index = lua_random::random_int(&mut state, 0.0, VoucherArray::get_max()) as usize;
 
         voucher_index
     }
