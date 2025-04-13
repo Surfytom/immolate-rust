@@ -18,5 +18,5 @@ fn main() {
     
     let joker = joker::Joker::random(&mut game_state.random_state, joker::Rarity::COMMON, game_state.ante, "key");
 
-    println!("Joker: {:?}", joker.joker);
+    println!("Joker: {:?}", joker);
 }
