@@ -1,4 +1,4 @@
-use crate::game::state::RandomState;
+use crate::game::state;
 use crate::game::random;
 use crate::game::random::Random;
 
@@ -16,10 +16,10 @@ pub struct Pack {
     weight: f64,
     size: usize,
     card_type: PackCardType,
-    key: &'static str
+    pub key: &'static str
 }
 
-static WEIGHTED_PACKS: [Pack; 15] = [
+pub static WEIGHTED_PACKS: [Pack; 15] = [
     Pack { name: "ARCANA_PACK", weight: 4.0, size: 3, card_type: PackCardType::Tarot, key: "ar1" },
     Pack { name: "JUMBO_ARCANA_PACK", weight: 2.0, size: 5, card_type: PackCardType::Tarot, key: "ar1" },
     Pack { name: "MEGA_ARCANA_PACK", weight: 0.5, size: 5, card_type: PackCardType::Tarot, key: "ar1" },
@@ -60,22 +60,27 @@ pub enum CardType {
 
 impl Pack {
 
-    pub fn get_random_pack(random_state: &mut RandomState, first_pack: bool) -> Pack {
-        if first_pack {
+    pub fn get_random_pack(game_state: &mut state::State) -> Pack {
+        if game_state.is_first_pacK() {
             return WEIGHTED_PACKS[BUFFOON_PACK_INDEX];
         } else {
     
-            let seed = random::concat_strings(&["shop_pack", &random_state.ante.to_string(), &random_state.seed]);
-            let mut db = random_state.random_double(&seed);
+            let seed = random::concat_strings(&["shop_pack", &game_state.random_state.ante.to_string(), &game_state.random_state.seed]);
+            let mut db = game_state.random_state.random_double(&seed);
+
+            println!("Returned double: {:.25}", db);
     
             db *= TOTAL_WEIGHT;
     
             let mut accumulated_weight = 0.0;
+
+            println!("total weight: {:.25}", db);
     
             if let Some(pack) = WEIGHTED_PACKS.iter().enumerate().find(|(_, p)| {
                 accumulated_weight += p.weight;
-                accumulated_weight >= db
-            }) {    
+                println!("accum weight: {}", accumulated_weight);
+                accumulated_weight > db
+            }) {
                 *pack.1
             } else {
                 WEIGHTED_PACKS[0]
@@ -83,7 +88,7 @@ impl Pack {
         }
     }
 
-    pub fn open(&mut self, random_state: &mut RandomState) -> Vec<CardType> {
+    pub fn open(&mut self, random_state: &mut state::RandomState) -> Vec<CardType> {
 
         let mut cards = Vec::with_capacity(self.size);
 
@@ -95,7 +100,7 @@ impl Pack {
         cards
     }
 
-    pub fn get_random_card(&mut self, random_state: &mut RandomState, rarity: Rarity) -> CardType {
+    pub fn get_random_card(&mut self, random_state: &mut state::RandomState, rarity: Rarity) -> CardType {
         println!("{:?}", self.card_type);
         match self.card_type {
             PackCardType::Tarot => CardType::Tarot(Tarot::get_random(random_state)),

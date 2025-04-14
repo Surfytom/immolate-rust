@@ -1,65 +1,53 @@
-#[allow(non_camel_case_types)]
-enum Suites {
-    HEARTS,
-    CLUBS,
-    SPADES,
-    DIAMONDS
-}
+pub mod deck_data;
+use crate::game::state::*;
+use crate::game::card::card_data::CARD_CARDS;
 
-#[allow(non_camel_case_types)]
-enum Ranks {
-    TWO,
-    THREE,
-    FOUR,
-    FIVE,
-    SIX,
-    SEVEN,
-    EIGHT,
-    NINE,
-    TEN,
-    JACK,
-    QUEEN,
-    KING,
-    ACE
-}
-
-pub struct Card {
-    suite: Suites,
-    rank: Ranks
-}
-
+#[derive(Debug)]
 pub struct Deck {
-    cards: Vec<Card>,
+    cards: Vec<&'static str>,
     hand_size: u32,
     discard_amount: u32,
     hand_amount: u32,
-    hand: Vec<Card>
+    hand: Vec<&'static str>
 }
 
 impl Deck {
-    pub fn new() -> Deck {
-        Deck {
-            cards: Vec::new(),
-            hand_size: 0,
-            discard_amount: 0,
-            hand_amount: 0,
-            hand: Vec::new()
-        }
+    pub fn new() -> Self {
+        Deck { cards: Deck::get_standard_deck(), hand_size: 8, discard_amount: 4, hand_amount: 4, hand: Vec::new() }
     }
-}
 
-#[allow(non_camel_case_types)]
-pub enum Hands {
-    FLUSH_FIVE,
-    FLUSH_HOUSE,
-    FIVE_OF_A_KIND,
-    STRAIGHT_FLUSH,
-    FOUR_OF_A_KIND,
-    FULL_HOUSE,
-    FLUSH,
-    STRAIGHT,
-    THREE_OF_A_KIND,
-    TWO_PAIR,
-    PAIR,
-    HIGH_CARD
+    pub fn new_with_state(deck_type: deck_data::Decks, game_state: &mut State) -> Self {
+        deck_type.setup(game_state)
+    }
+
+    pub fn set_discard(&mut self, amount: u32) {
+        self.discard_amount = amount;
+    }
+
+    pub fn set_hand_amount(&mut self, amount: u32) {
+        self.hand_amount = amount;
+    }
+
+    pub fn set_hand_size(&mut self, amount: u32) {
+        self.hand_size = amount;
+    }
+
+    fn fill_cards(&mut self) {
+        self.cards = CARD_CARDS.clone().to_vec();
+    }
+
+    fn get_standard_deck() -> Vec<&'static str> {
+        CARD_CARDS.clone().to_vec()
+    }
+
+    fn filter_deck(&mut self, match_strings: &[&str]) {
+        self.cards.retain(| card | match_strings.iter().all(| s |
+            !card.contains(&s.to_uppercase())
+        ))
+    }
+
+    fn double_deck(&mut self) {
+        let mut card_copy = self.cards.clone();
+        self.cards.append(&mut card_copy);
+    }
 }

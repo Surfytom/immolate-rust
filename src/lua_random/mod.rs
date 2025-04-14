@@ -126,6 +126,8 @@ fn random_unsigned_int(state: &mut [u64; 4]) -> DoubleLong {
 
     unsafe { dl.ul = (dl.ul & 4503599627370495) | 4607182418800017408 };
 
+    println!("unsigned int: {}", unsafe{ dl.ul });
+
     dl
 }
 

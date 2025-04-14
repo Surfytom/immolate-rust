@@ -2,20 +2,18 @@ mod lua_random;
 mod game;
 use crate::game::state;
 use crate::game::pack;
+use crate::game::deck::deck_data::Decks;
+use crate::game::shop;
 
 fn main() {
 
-    let mut game_state = state::State::new("ABC");
+    let mut game_state = state::State::new("ABC", Decks::RED);
 
-    let mut random_pack = pack::Pack::get_random_pack(&mut game_state.random_state, true);
+    let mut shop = shop::Shop::default();
 
-    println!("First Pack: {:?}", random_pack);
+    shop.random(&mut game_state);
 
-    let cards = random_pack.open(&mut game_state.random_state);
-
-    println!("Pack Cards: {:?}", cards);
-
-    let random_pack_2 = pack::Pack::get_random_pack(&mut game_state.random_state, false);
-
-    println!("Second Pack: {:?}", random_pack_2);
+    println!("shop: {:?}", shop);
+    // let random_pack = pack::Pack::get_random_pack(&mut game_state);
+    // println!("Pack: {:?}", random_pack);
 }

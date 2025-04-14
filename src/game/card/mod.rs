@@ -1,6 +1,6 @@
 use crate::game::state::RandomState;
 use crate::game::random;
-mod card_data;
+pub mod card_data;
 
 #[derive(Debug)]
 pub struct Card {
@@ -17,7 +17,7 @@ impl Card {
     }
 
     pub fn get_random(random_state: &mut RandomState, key: &str) -> Card {
-        let seed = random::concat_strings(&["front", key]);
+        let seed = random::concat_strings(&["front", key, &random_state.ante.to_string(), &random_state.seed]);
         let card_number = random_state.random_usize(0.0, Card::get_max(), &seed);
 
         Card::from_number(card_number)

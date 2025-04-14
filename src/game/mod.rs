@@ -8,3 +8,4 @@ pub mod spectral;
 pub mod planet;
 pub mod voucher;
 pub mod card;
+pub mod shop;
